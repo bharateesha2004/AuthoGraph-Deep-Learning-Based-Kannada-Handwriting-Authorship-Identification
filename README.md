@@ -1,7 +1,7 @@
 AuthoGraph - Deep Learning-Based Kannada Handwriting Author Detection :
 
 A machine learning-based web application that identifies the author of Kannada handwriting samples using TensorFlow and Flask.
-
+---
 ## Project Description
 
 This project uses a deep learning model to analyze and identify the author of Kannada handwritten text. The system is built using TensorFlow for the machine learning component and Flask for the web interface, making it easily accessible through a browser.
