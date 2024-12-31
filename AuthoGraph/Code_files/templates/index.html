@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Author Detection</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .sidebar {
+            flex: 1;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+        }
+        .main-content {
+            flex: 2;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            width: 200px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .file-upload input[type=file] {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-upload-text {
+            display: block;
+            text-align: center;
+        }
+        .run-button {
+            background-color: #1E88E5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .run-button:hover {
+            background-color: #0D47A1;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .result p {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #555;
+            white-space: pre-line; /* Ensures newlines are preserved */
+        }
+        .file-name {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .uploaded-images {
+            margin-bottom: 20px;
+        }
+        .uploaded-image-container {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .uploaded-image {
+            max-width: 100%;
+            display: block;
+            border-radius: 4px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3>Uploaded Images</h3>
+            <div id="uploaded-images">
+                <!-- JavaScript will populate this with uploaded images -->
+            </div>
+        </div>
+        <div class="main-content">
+            <h1>Author Detection</h1>
+            <div id="file-info"></div>
+            <form id="upload-form" action="/" method="post" enctype="multipart/form-data">
+                <label for="file-upload" class="file-upload">
+                    <span class="file-upload-text">Choose an image</span>
+                    <input type="file" id="file-upload" name="file" accept="image/*" onchange="displayFileAndUpload()">
+                </label>
+                <br><br>
+                <button type="button" id="run-button" class="run-button" onclick="runModel()">Run</button>
+                <input type="hidden" id="file-name" name="file_name">
+                <input type="submit" style="display: none;">
+            </form>
+            <div id="result-container">
+                {% if prediction %}
+                <div class="result">
+                    <p>{{ prediction | safe }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to display uploaded file information and upload it
+        function displayFileAndUpload() {
+            const input = document.getElementById('file-upload');
+            const file = input.files[0];
+            const fileName = file.name;
+            document.getElementById('file-info').innerHTML = `<div class="file-name">File uploaded: ${fileName}</div>`;
+            document.getElementById('file-name').value = fileName;
+
+            // Display the image in the sidebar
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = fileName;
+                img.title = fileName;
+
+                const uploadedImageContainer = document.createElement('div');
+                uploadedImageContainer.classList.add('uploaded-image-container');
+                uploadedImageContainer.innerHTML = `
+                    <div class="file-name">File: ${fileName}</div>
+                    <img class="uploaded-image" src="${img.src}" alt="${img.alt}">
+                `;
+
+                const uploadedImagesDiv = document.getElementById('uploaded-images');
+                //uploadedImagesDiv.innerHTML = ''; // Clear previous images
+                uploadedImagesDiv.appendChild(uploadedImageContainer); // Append new image container
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Function to submit the form (run the model)
+        function runModel() {
+            document.getElementById('upload-form').submit();
+        }
+    </script>
+</body>
+</html>
