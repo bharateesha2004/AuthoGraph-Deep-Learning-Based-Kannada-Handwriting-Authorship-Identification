@@ -84,6 +84,13 @@ The system uses a pre-trained deep learning model (`model_file.h5`) that:
 
 ---
 
+## Sample working output 
+
+![1](https://github.com/user-attachments/assets/bd7bbf1e-794b-43ef-978c-5e86373e8b2d)
+
+
+---
+
 ## Project Structure
 
 ```
